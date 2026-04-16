@@ -26,21 +26,27 @@ pipeline {
         stage("Push Image to Repository") {
             when { tag 'v*' }
             steps {
-                    script {
-                echo "📤 Pushing image to DockerHub..."
-                withCredentials([usernamePassword(credentialsId: "docker", passwordVariable: "password", usernameVariable: "user")]) {
-                    sh """
-                        docker login -u ${env.user} -p ${env.password}
-                        docker tag currency-convapp ${env.user}/currency-convapp:${TAG_NAME}
-                        docker push ${env.user}/currency-convapp${TAG_NAME}
-                    """
+                script {
+                    echo "📤 Pushing image to DockerHub..."
+                    withCredentials([usernamePassword(credentialsId: "docker", passwordVariable: "password", usernameVariable: "user")]) {
+                        sh """
+                            docker login -u ${env.user} -p ${env.password}
+                            docker tag currency-convapp ${env.user}/currency-convapp:${TAG_NAME}
+                            docker push ${env.user}/currency-convapp:${TAG_NAME}
+                        """
+                    }
+                    echo "✅ Image pushed successfully"
                 }
-                echo "✅ Image pushed successfully"
             }
         }
     }
+    
     post {
-        success { echo "🎉 Deployment successful!" }
-        failure { echo "❌ Deployment failed! Check logs above." }
+        success { 
+            echo "🎉 Deployment successful!" 
+        }
+        failure { 
+            echo "❌ Deployment failed! Check logs above." 
+        }
     }
 }

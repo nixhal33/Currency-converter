@@ -3,7 +3,7 @@ pipeline {
     
     stages {
         stage("Clone Code") {
-            when { tag 'v*'}
+            when { tag 'v*' }
             steps {
                 echo "📦 Cloning repository..."
                 git branch: 'main', credentialsId: 'github', url: 'https://github.com/nixhal33/Currency-converter.git'
@@ -12,7 +12,7 @@ pipeline {
         }
         
         stage("Build Image") {
-            when { tag 'v*'}
+            when { tag 'v*' }
             steps {
                 script {
                     TAG_NAME = env.GIT_BRANCH.replaceFirst(refs/tags/', '')
@@ -24,7 +24,7 @@ pipeline {
         }
         
         stage("Push Image to Repository") {
-            when { tag 'v*'}
+            when { tag 'v*' }
             steps {
                     script {
                 echo "📤 Pushing image to DockerHub..."

@@ -15,7 +15,7 @@ pipeline {
             when { tag 'v*' }
             steps {
                 script {
-                    TAG_NAME = env.GIT_BRANCH.replaceFirst(refs/tags/', '')
+                    TAG_NAME = env.GIT_BRANCH.replaceFirst('refs/tags/', '')
                     echo "Building Docker Image"
                     sh "docker build -t currency-convapp ."
                     echo "✅ Image built successfully"

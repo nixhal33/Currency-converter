@@ -26,6 +26,7 @@ pipeline {
         stage("Push Image to Repository") {
             when { tag 'v*'}
             steps {
+                    script {
                 echo "📤 Pushing image to DockerHub..."
                 withCredentials([usernamePassword(credentialsId: "docker", passwordVariable: "password", usernameVariable: "user")]) {
                     sh """
@@ -37,13 +38,9 @@ pipeline {
                 echo "✅ Image pushed successfully"
             }
         }
-    
+    }
     post {
-        success {
-            echo "🎉 Deployment successful!"
-        }
-        failure {
-            echo "❌ Deployment failed! Check logs above."
-        }
+        success { echo "🎉 Deployment successful!" }
+        failure { echo "❌ Deployment failed! Check logs above." }
     }
 }

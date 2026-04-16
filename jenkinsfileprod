@@ -29,17 +29,6 @@ pipeline {
                 echo "✅ Image pushed successfully"
             }
         }
-        
-        stage("SSH into Server") {
-            steps {
-                echo "🚀 Deploying to server..."
-                sshagent(['ssh-deployment']) {
-                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@ "cd /home/ubuntu/currency-converter && docker compose pull && docker compose up --force-recreate -d"'
-                }
-                echo "✅ Deployment completed"
-            }
-        }
-    }
     
     post {
         success {

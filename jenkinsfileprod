@@ -28,9 +28,11 @@ pipeline {
             steps {
                 echo "📤 Pushing image to DockerHub..."
                 withCredentials([usernamePassword(credentialsId: "docker", passwordVariable: "password", usernameVariable: "user")]) {
-                    sh "docker login -u ${env.user} -p ${env.password}"
-                    sh "docker tag currency-convapp ${env.user}/currency-convapp:${TAG_NAME}"
-                    sh "docker push ${env.user}/currency-convapp${TAG_NAME}"
+                    sh """
+                        docker login -u ${env.user} -p ${env.password}
+                        docker tag currency-convapp ${env.user}/currency-convapp:${TAG_NAME}
+                        docker push ${env.user}/currency-convapp${TAG_NAME}
+                    """
                 }
                 echo "✅ Image pushed successfully"
             }

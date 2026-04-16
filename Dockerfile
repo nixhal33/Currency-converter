@@ -7,7 +7,10 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci --only=production=false
+RUN npm ci --silent
+
+# Give Permissions to vite
+RUN chmod +x node_modules/.bin/*
 
 # Copy source code
 COPY . .

@@ -1,0 +1,52 @@
+pipeline {
+    agent any
+    
+    stages {
+        stage("Clone Code") {
+            steps {
+                echo "📦 Cloning repository..."
+                git branch: 'main', credentialsId: 'github', url: 'https://github.com/nixhal33/currency-converter.git'
+                echo "✅ Clone completed"
+            }
+        }
+        
+        stage("Build Image") {
+            steps {
+                echo "🔨 Building Docker image..."
+                sh "docker build -t currency-converter:prod ."
+                echo "✅ Image built successfully"
+            }
+        }
+        
+        stage("Push Image to Repository") {
+            steps {
+                echo "📤 Pushing image to DockerHub..."
+                withCredentials([usernamePassword(credentialsId: "docker", passwordVariable: "password", usernameVariable: "user")]) {
+                    sh "docker tag currency-converter:prod ${env.user}/currency-converter:prod"
+                    sh "docker login -u ${env.user} -p ${env.password}"
+                    sh "docker push ${env.user}/currency-converter:prod"
+                }
+                echo "✅ Image pushed successfully"
+            }
+        }
+        
+        stage("SSH into Server") {
+            steps {
+                echo "🚀 Deploying to server..."
+                sshagent(['ssh-deployment']) {
+                    sh 'ssh -o StrictHostKeyChecking=no ubuntu@ "cd /home/ubuntu/currency-converter && docker compose pull && docker compose up --force-recreate -d"'
+                }
+                echo "✅ Deployment completed"
+            }
+        }
+    }
+    
+    post {
+        success {
+            echo "🎉 Deployment successful!"
+        }
+        failure {
+            echo "❌ Deployment failed! Check logs above."
+        }
+    }
+}

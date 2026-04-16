@@ -15,7 +15,7 @@ pipeline {
             when { tag 'v*'}
             steps {
                 echo "🔨 Building Docker image..."
-                sh "docker build -t currency-convapp -f Dockerfile-prod ."
+                sh "docker build -t currency-convapp ."
                 echo "✅ Image built successfully"
             }
         }
